@@ -157,7 +157,7 @@ void Mask::drawMaskImage(ofRectangle r){
     
     int nbMask = listOfMask.size();
     int marginX = 2;
-    int finalWidth = (r.width / nbMask) - marginX;
+    int finalWidth = (r.width / nbMask) - nbMask*marginX;
     int finalHeight = finalWidth * 0.58;
     
     for(int i=0; i<listOfMask.size(); i++){
@@ -183,7 +183,7 @@ void Mask::drawBgImage(ofRectangle r){
     
     int nbBg = listOfBackground.size();
     int marginX = 2;
-    int finalWidth = (r.width / nbBg) - marginX;
+    int finalWidth = (r.width / nbBg) - nbBg*marginX;
     int finalHeight = finalWidth * 0.58;
     
     for(int i=0; i<nbBg; i++){

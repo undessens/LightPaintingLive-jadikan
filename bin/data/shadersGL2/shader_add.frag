@@ -5,6 +5,9 @@ uniform sampler2DRect tex0;
 //This is the new frame
 uniform sampler2DRect background;
 uniform float keep_dark;
+uniform float shaderAlphaThresholdBg;
+uniform float shaderAlphaThresholdNi;
+uniform float shaderLumThreshold;
 
 varying vec2 texCoordVarying;
 
@@ -83,14 +86,14 @@ void main()
     float diff = hslColorNewFrame.b - hslColorBackground.b;
     
     float alpha ;
-    if(bg.a < 0.1){
+    if(bg.a < shaderAlphaThresholdBg){
     	//if there is something in the backgound
     	alpha = ni.a;
     }else{
     	//IF something in the background
-    	if(ni.a > 0.1){
+    	if(ni.a > shaderAlphaThresholdNi){
     		//IF there is something in the new image
-    		if(diff > 0.2){
+    		if(diff > shaderLumThreshold){
     			//if new image luminosity is higher thant the background
     			alpha = 1;
     		}else{

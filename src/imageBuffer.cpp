@@ -41,13 +41,22 @@ void ImageBuffer::setup(){
     
     pg->setName("Image buffer");
     pg->add(isShown.set("show", true));
-    pg->add(currentImage.set("Image index", 0, 0, nbImage));
+    //pg->add(currentImage.set("Image index", 0, 0, nbImage));
     pg->add(reset.set("Reset", false));
-    pg->add(nbTextureMax.set("History", 60, 1, 400));
-    pg->add(listOfTextureIndex.set("BufferIndex", 5, 0, 59));
-    pg->add(darkerInTime.set("Darker", 0, 0, 255));
-    pg->add(shaderKeepDark.set("Keep Dark", 0, 0, 1));
+    //pg->add(nbTextureMax.set("History", 60, 1, 400));
+    //pg->add(listOfTextureIndex.set("BufferIndex", 5, 0, 59));
     pg->add(opacityAtDraw.set("Opacity", 255, 100, 255));
+    pg->add(darkerInTime.set("History Darker", 0, 0, 35));
+    pg->add(shaderKeepDark.set("Shader :Keep Dark", 0, 0, 1));
+    pg->add(shaderAlphaThresholdBg.set("Shader :Alpha Tresh bg", 0.1, 0, 1));
+    pg->add(shaderAlphaThresholdNi.set("Shader :Alpha Tresh ni", 0.1, 0, 1));
+    pg->add(shaderLumThreshold.set("Shader :Alpha Lum Thresh", 0.2, 0, 1));
+    
+    /*
+     ofParameter<float>shaderAlphaThresholdBg;
+     ofParameter<float>shaderAlphaThresholdNi;
+     ofParameter<float>shaderLumThreshold;
+     */
     
     // FBO CLEAR
     fbo.allocate(w, h, GL_RGBA32F_ARB);
@@ -101,9 +110,6 @@ void ImageBuffer::setup(){
 //--------------------------------------------------------------
 void ImageBuffer::update(ofFbo* input, int frameNum){
 
-    
-    
-    
     /*
      // THIS REDUCE FPS FROM 60 TO 18 ... no way
     bool doReset = true;
@@ -122,7 +128,9 @@ void ImageBuffer::update(ofFbo* input, int frameNum){
     fbo.begin();
     shader_add.begin();
     shader_add.setUniform1f("keep_dark", shaderKeepDark);
-    
+    shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
+    shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
+    shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
     shader_add.setUniformTexture("background",fbo.getTexture(), 1);
     //FBO drawing in itself.
     input->draw(0, 0);
@@ -179,11 +187,10 @@ void ImageBuffer::resetBuffer(bool &isReset){
     if(isReset){
     
         fbo.begin();
+        //0 means transparent
         //ofClear(0,0,0, 255);
         // let tranparent background of ImageBuffer
         ofClear(0,0,0, 0);
-        //Only for debug
-        //shader_test.draw(0, 0);
         fbo.end();
         
     }

@@ -40,6 +40,9 @@ public:
     ofParameter<int> darkerInTime;
     ofParameter<int> opacityAtDraw;
     ofParameter<float>shaderKeepDark;
+    ofParameter<float>shaderAlphaThresholdBg;
+    ofParameter<float>shaderAlphaThresholdNi;
+    ofParameter<float>shaderLumThreshold;
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
     
