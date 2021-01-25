@@ -58,6 +58,17 @@
  */
 
 /*
+ RENCONTRE AVEC JADIKAN janvier 2021
+ Enlever la transparence avant le buffet image, et juste comparer la différence de luminosité
+ Entre le fond et la nouvelle image. Si cette différence est faible, alors on ajoute un effet de transparence. ( proportionnelle ).
+ 
+ Rajouter un mirroir
+ Rajouter un fullscreen
+ 
+ 
+*/
+
+/*
  ========================================
  HSV seems to be better than hsl
  because pure blue and pure white are at the same level of value.

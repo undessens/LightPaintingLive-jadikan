@@ -82,6 +82,8 @@ void main()
     */
     vec3 hslColorBackground = rgb2hsl(vec3(bg.r, bg.g, bg.b));
     vec3 hslColorNewFrame = rgb2hsl(vec3(ni.r, ni.g, ni.b));
+    
+    /*
     //if Luminance is better on the new frame
     float diff = hslColorNewFrame.b - hslColorBackground.b;
     
@@ -103,14 +105,28 @@ void main()
     		//Something on the back, but not in the new image
     		alpha = 0;
     	}
-    	
-    	
     }
+     */
+    
+    
+
+    
+    if(hslColorNewFrame.b > hslColorBackground.b){
+        gl_FragColor = vec4( ni.r, ni.g, ni.b , ni.a);
+    }else{
+        float final_a = (ni.a + bg.a)/2;
+        float final_r = ((ni.r * ni.a)+(bg.r * bg.a))/(ni.a + bg.a );
+        float final_g = ((ni.g * ni.a)+ (bg.g * bg.a))/(ni.a + bg.a );
+        float final_b = ((ni.b * ni.a)+(bg.b * bg.a))/(ni.a + bg.a );
+        //gl_FragColor = vec4( final_r, final_g, final_b , final_a);
+        gl_FragColor = vec4( bg.r, bg.g, bg.b , bg.a);
+    }
+     
+
+    
+    
 
 
-
-
-    gl_FragColor = vec4( ni.r, ni.g, ni.b , alpha);
 
 
 

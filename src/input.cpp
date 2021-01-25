@@ -34,10 +34,11 @@ void Input::setup(){
     pg->add(useOfVideoPlayer.set("use of video", true));
     pg->add(videoIndex.set("video index", 3, 1, 7));
     pg->add(threshold.set("threshold", 0.1,0, 1.0));
-    pg->add(smooth.set("smooth threshold", 0, 0, 5));
+    pg->add(smooth.set("threshold curve", 0, 0, 1));
+    pg->add(transparency.set("transparency", 0, 0, 1));
     pg->add(playerPause.set("Video Pause", false));
     pg->add(blur.set("blur", 0, 0, 10));
-    pg->add(skipStep.set("Skip step", 0, 0, 3));
+    pg->add(skipStep.set("Skip step", 2, 0, 3));
     
     //BLACK MAGIC
     blackMagic.setup(1920, 1080, 30);
@@ -103,8 +104,9 @@ void Input::update(){
     fboTresh.begin();
     ofClear(255,255,255, 0);
     shaderTreshHsv.begin();
-    shaderTreshHsv.setUniform1f("squared_threshold", threshold);
-    shaderTreshHsv.setUniform1f("squared_smooth", smooth);
+    shaderTreshHsv.setUniform1f("threshold", threshold);
+    shaderTreshHsv.setUniform1f("threshold_smooth", smooth);
+    shaderTreshHsv.setUniform1f("transparency_smooth", transparency);
     if(useOfVideoPlayer){
         player.update();
         ofSetColor(255, 255, 255, 255);
@@ -161,7 +163,7 @@ void Input::update(){
             break;
     }
     ofDisableAlphaBlending();
-    fboBlur2.end();
+    fbo.end();	
     
 
     

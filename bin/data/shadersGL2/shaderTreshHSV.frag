@@ -2,8 +2,9 @@
 
 uniform sampler2DRect tex0;
 
-uniform float squared_threshold;
-uniform float squared_smooth;
+uniform float threshold;
+uniform float threshold_smooth;
+uniform float transparency_smooth;
 
 varying vec2 texCoordVarying;
 
@@ -43,26 +44,47 @@ void main()
     vec4 outputColor;
     color =  texture2DRect(tex0, texCoordVarying );
     vec3 hsvColor = rgb2hsv(vec3(color.r, color.g, color.b));
-    vec3 rgbColor = hsv2rgb(hsvColor);
+    //vec3 rgbColor = hsv2rgb(hsvColor);
     float transparent_value;
     
     
-    if (hsvColor.b >= (squared_threshold + squared_smooth) )
+    // This is transparent threshold
+    
+    if (hsvColor.b >= (threshold* transparency_smooth )  )
     {
      transparent_value = 1;
     }
-    else if (hsvColor.b >= squared_threshold )
-    {
-        float alphaValue = (hsvColor.b - squared_threshold ) / squared_smooth;
-        transparent_value = alphaValue;
+   else
+   {
+       float alphaValue = (hsvColor.b  / ( threshold * transparency_smooth));
+       transparent_value = alphaValue;
 
     }
-    else    
-    {
-     transparent_value = 0;
-    }
 
+     
+
+     
+     
+    // This is black threshold
+    if (hsvColor.b >= (threshold ) ){
+
+    }
+    else if (hsvColor.b >= (threshold* threshold_smooth ))
+    {
+        float brightnessValue = (hsvColor.b - threshold*threshold_smooth ) / ( threshold * ( 1.0 - threshold_smooth));
+        hsvColor.b = hsvColor.b* brightnessValue;
+
+        
+    }
+    else{
+        hsvColor.b = 0;
+    }
+    
+    vec3 rgbColor = hsv2rgb(vec3(hsvColor.r, hsvColor.g, hsvColor.b));
     outputColor = vec4(rgbColor.r, rgbColor.g, rgbColor.b, transparent_value);
+    
+
+    
     //outputColor = vec4(rgbColor.r, 0, 0, 1);
 
 

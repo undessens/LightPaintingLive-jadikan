@@ -55,6 +55,7 @@ public:
     ofParameter<int> skipStep;
     ofParameter<double> threshold;
     ofParameter<float> smooth;
+    ofParameter<float> transparency;
     ofParameter<float> blur;
     ofParameter<bool> isShown;
     ofShader shaderTreshHsv;
