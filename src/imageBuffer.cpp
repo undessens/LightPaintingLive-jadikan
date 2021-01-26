@@ -39,7 +39,7 @@ void ImageBuffer::setup(){
     
     reset.addListener(this, &ImageBuffer::resetBuffer);
     
-    pg->setName("Image buffer");
+    pg->setName("Image_buffer");
     pg->add(isShown.set("show", true));
     //pg->add(currentImage.set("Image index", 0, 0, nbImage));
     pg->add(reset.set("Reset", false));

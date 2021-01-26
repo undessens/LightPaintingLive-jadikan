@@ -65,6 +65,45 @@ vec3 rgb2hsv(vec3 c) {
 	return vec3( h, s, l );
 }
 
+float hue2rgb(float f1, float f2, float hue) {
+    if (hue < 0.0)
+        hue += 1.0;
+    else if (hue > 1.0)
+        hue -= 1.0;
+    float res;
+    if ((6.0 * hue) < 1.0)
+        res = f1 + (f2 - f1) * 6.0 * hue;
+    else if ((2.0 * hue) < 1.0)
+        res = f2;
+    else if ((3.0 * hue) < 2.0)
+        res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+    else
+        res = f1;
+    return res;
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+    vec3 rgb;
+    
+    if (hsl.y == 0.0) {
+        rgb = vec3(hsl.z); // Luminance
+    } else {
+        float f2;
+        
+        if (hsl.z < 0.5)
+            f2 = hsl.z * (1.0 + hsl.y);
+        else
+            f2 = hsl.z + hsl.y - hsl.y * hsl.z;
+        
+        float f1 = 2.0 * hsl.z - f2;
+        
+        rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+        rgb.g = hue2rgb(f1, f2, hsl.x);
+        rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+    }
+    return rgb;
+}
+
 void main()
 {
     vec4 ni = texture2DRect(tex0, texCoordVarying); // new image
@@ -109,27 +148,33 @@ void main()
      */
     
     
-
+    // THIS IS LIGHTEN BLEND MODE
     
-    if(hslColorNewFrame.b > hslColorBackground.b){
+    if(hslColorNewFrame.b >= (hslColorBackground.b  ) ){
         gl_FragColor = vec4( ni.r, ni.g, ni.b , ni.a);
+//        float final_r = 1.0 - (( 1.0 - ni.r)*(1.0-bg.r));
+//        float final_g = 1.0 - (( 1.0 - ni.g)*(1.0-bg.g));
+//        float final_b = 1.0 - (( 1.0 - ni.b)*(1.0 -bg.b));
+//        gl_FragColor = vec4( final_r, final_g, final_b , 1);
     }else{
-        float final_a = (ni.a + bg.a)/2;
-        float final_r = ((ni.r * ni.a)+(bg.r * bg.a))/(ni.a + bg.a );
-        float final_g = ((ni.g * ni.a)+ (bg.g * bg.a))/(ni.a + bg.a );
-        float final_b = ((ni.b * ni.a)+(bg.b * bg.a))/(ni.a + bg.a );
-        //gl_FragColor = vec4( final_r, final_g, final_b , final_a);
-        gl_FragColor = vec4( bg.r, bg.g, bg.b , bg.a);
+        gl_FragColor = vec4( bg.r, bg.g, bg.b , 1);
+
     }
-     
-
     
     
+    
+    
+    //THIS IS SCREEN MODE
+    /*
+    float final_r = 1.0 - (( 1.0 - ni.r)*(1.0-bg.r));
+    float final_g = 1.0 - (( 1.0 - ni.g)*(1.0-bg.g));
+    float final_b = 1.0 - (( 1.0 - ni.b)*(1.0 -bg.b));
 
+    
+    gl_FragColor = vec4( final_r, final_g, final_b , 1);
+     */
 
-
-
-
+    
 
     
 }

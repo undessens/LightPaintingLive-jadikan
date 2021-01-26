@@ -146,6 +146,7 @@ void ofApp::setup(){
     gui.add(pg_input);
     gui.add(pg_imageBuffer);
     gui.add(pg_mask);
+    sync.setup(pg, 12343, "0.0.0.0", 12341);
     
     
 
@@ -257,6 +258,7 @@ void ofApp::update(){
     }
     
     updateZoom();
+    sync.update();
  
  
  
