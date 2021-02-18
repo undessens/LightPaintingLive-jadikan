@@ -30,7 +30,8 @@ public:
     int w;
     int h;
     int nbImage;
-    ofFbo fbo; // Will change to an array on fbo, according to each image
+    ofFbo finalFbo; // Will change to an array on fbo, according to each image
+    ofFbo bgFbo; // Will change to an array on fbo, according to each image
     vector<ofTexture> listOfTexture;  // Vector of texture for creating real history of motion
     vector<int> listOfFrame;
     ofParameter<int> nbTextureMax; // nb Max of history
@@ -45,6 +46,7 @@ public:
     ofParameter<float>shaderLumThreshold;
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
+    ofParameter<bool> bypass;
     
     //SHADER SOLUTION
     ofShader shader_add;

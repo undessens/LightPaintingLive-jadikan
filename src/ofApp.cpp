@@ -196,7 +196,7 @@ void ofApp::update(){
     input->update();
     imageBuffer->update(&(input->fbo), input->player.getCurrentFrame() );
     
-    mask->update(&imageBuffer->fbo);
+    mask->update(&imageBuffer->finalFbo);
     
     fboPost.begin();
     mask->draw(0,0,input_w,input_h);
@@ -344,7 +344,7 @@ void ofApp::updateZoom(){
     // ZOOM is set from BUFFER_IMAGE
     if(zoomLevelEntry == 2){
         
-        imageBuffer->fbo.readToPixels(zoomPixels);
+        imageBuffer->finalFbo.readToPixels(zoomPixels);
         float posX = zoomRectangle.x - vignetteBuffer.x;
         float posY = zoomRectangle.y - vignetteBuffer.y;
         float ratioX = vignetteBuffer.width / input_w;

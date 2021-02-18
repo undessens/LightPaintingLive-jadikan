@@ -45,12 +45,13 @@ void ImageBuffer::setup(){
     pg->add(reset.set("Reset", false));
     //pg->add(nbTextureMax.set("History", 60, 1, 400));
     //pg->add(listOfTextureIndex.set("BufferIndex", 5, 0, 59));
-    pg->add(opacityAtDraw.set("Opacity", 255, 100, 255));
+    //pg->add(opacityAtDraw.set("Opacity", 255, 100, 255));
     pg->add(darkerInTime.set("History Darker", 0, 0, 35));
-    pg->add(shaderKeepDark.set("Shader :Keep Dark", 0, 0, 1));
-    pg->add(shaderAlphaThresholdBg.set("Shader :Alpha Tresh bg", 0.1, 0, 1));
-    pg->add(shaderAlphaThresholdNi.set("Shader :Alpha Tresh ni", 0.1, 0, 1));
-    pg->add(shaderLumThreshold.set("Shader :Alpha Lum Thresh", 0.2, 0, 1));
+    //pg->add(shaderKeepDark.set("Shader :Keep Dark", 0, 0, 1));
+    //pg->add(shaderAlphaThresholdBg.set("Shader :Alpha Tresh bg", 0.1, 0, 1));
+    //pg->add(shaderAlphaThresholdNi.set("Shader :Alpha Tresh ni", 0.1, 0, 1));
+    pg->add(shaderLumThreshold.set("Threshold luminance", 0, -1, 1));
+    pg->add(bypass.set("ByPass", false));
     
     /*
      ofParameter<float>shaderAlphaThresholdBg;
@@ -59,10 +60,15 @@ void ImageBuffer::setup(){
      */
     
     // FBO CLEAR
-    fbo.allocate(w, h, GL_RGBA32F_ARB);
-    fbo.begin();
+    finalFbo.allocate(w, h, GL_RGBA32F_ARB);
+    finalFbo.begin();
     ofClear(0,0,0, 0);
-    fbo.end();
+    finalFbo.end();
+    
+    bgFbo.allocate(w, h, GL_RGBA32F_ARB);
+    bgFbo.begin();
+    ofClear(0,0,0, 0);
+    bgFbo.end();
     
     // SHADER SOLUTION
     #ifdef TARGET_OPENGLES
@@ -110,56 +116,51 @@ void ImageBuffer::setup(){
 //--------------------------------------------------------------
 void ImageBuffer::update(ofFbo* input, int frameNum){
 
-    /*
-     // THIS REDUCE FPS FROM 60 TO 18 ... no way
-    bool doReset = true;
-    resetBuffer(doReset);
-    ofPixels pix;
-    input->getTexture().readToPixels( pix);
-    pix.setNumChannels(3);
-    colorImage.setFromPixels(pix);
-    
-    grayImage = colorImage;
-    grayImage.invert();
-    contourFinder.findContours(grayImage, 20, 2500, 10, true);
-     */
     
     //USING SHADER : GREAT
-    fbo.begin();
-    shader_add.begin();
-    shader_add.setUniform1f("keep_dark", shaderKeepDark);
-    shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
-    shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
-    shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
-    shader_add.setUniformTexture("background",fbo.getTexture(), 1);
-    //FBO drawing in itself.
-    input->draw(0, 0);
+    bgFbo.begin();
+    
+    if(!bypass){
+        shader_add.begin();
+        shader_add.setUniform1f("keep_dark", shaderKeepDark);
+        shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
+        shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
+        shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
+        shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
+        //FBO drawing in itself.
+        input->draw(0, 0);
+        shader_add.end();
+    }
 
-    shader_add.end();
-    fbo.end();
-    
-    //THIS IS WITHOUT SHADER
-    /*
-    fbo.begin();
-    //Should be change to something smarter
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-    
-    //DO NOT DRAW IT DIRECTLY
-    ofSetColor(opacityAtDraw);
-    input->draw(0, 0);
-    ofDisableBlendMode();
-    fbo.end();
-     */
+    bgFbo.end();
     
     
-    fbo.begin();
+    // ADD BLACK RECTANGLE FOR DARKER IN TIME
+    bgFbo.begin();
     //Should be replaced to something related to time;
     ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
     ofFill();
     ofSetColor(255-darkerInTime);
     ofDrawRectangle(0,0,w,h);
     ofDisableBlendMode();
-    fbo.end();
+    bgFbo.end();
+    
+    // FINAL FBO draw
+    finalFbo.begin();
+    ofClear(0, 0, 0,0);
+    bgFbo.draw(0,0);
+    if(bypass){
+        shader_add.begin();
+        shader_add.setUniform1f("keep_dark", shaderKeepDark);
+        shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
+        shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
+        shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
+        shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
+        //FBO drawing in itself.
+        input->draw(0, 0);
+        shader_add.end();
+    }
+    finalFbo.end();
     
     
 }
@@ -168,7 +169,7 @@ void ImageBuffer::update(ofFbo* input, int frameNum){
 void ImageBuffer::draw(int x,int y,int width, int height){
     
     ofSetColor(255);
-    fbo.draw(x, y, width, height);
+    finalFbo.draw(x, y, width, height);
     ofSetColor(ofColor::green);
     contourFinder.draw(x, y, width, height);
     
@@ -177,7 +178,7 @@ void ImageBuffer::draw(int x,int y,int width, int height){
 //--------------------------------------------------------------
 void ImageBuffer::draw(ofRectangle rect){
     
-    fbo.draw(rect);
+    finalFbo.draw(rect);
 
 }
 
@@ -186,12 +187,12 @@ void ImageBuffer::resetBuffer(bool &isReset){
     
     if(isReset){
     
-        fbo.begin();
+        bgFbo.begin();
         //0 means transparent
         //ofClear(0,0,0, 255);
         // let tranparent background of ImageBuffer
         ofClear(0,0,0, 0);
-        fbo.end();
+        bgFbo.end();
         
     }
     

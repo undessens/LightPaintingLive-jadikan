@@ -150,7 +150,7 @@ void main()
     
     // THIS IS LIGHTEN BLEND MODE
     
-    if(hslColorNewFrame.b >= (hslColorBackground.b  ) ){
+    if( ( hslColorNewFrame.b - hslColorBackground.b  ) >=  shaderLumThreshold){
         gl_FragColor = vec4( ni.r, ni.g, ni.b , ni.a);
 //        float final_r = 1.0 - (( 1.0 - ni.r)*(1.0-bg.r));
 //        float final_g = 1.0 - (( 1.0 - ni.g)*(1.0-bg.g));
