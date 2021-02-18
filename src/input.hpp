@@ -14,6 +14,8 @@
 #include "ofxGui.h"
 #include "ofxOscParameterSync.h"
 
+//Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
+#define INPUT_VIDEO 0
 
 /*
  
@@ -31,15 +33,24 @@ public:
     Input();
     Input( ofParameterGroup* pg, int w, int h);
     void setup();
-    void loadMovie(string name);
     void update();
-    void setUseVideo(bool &isUse);
     void setVideoIndex(int &newIndex);
     void setVideoPause(bool &isPause);
+    void videoGrabberInit();
     
-    //BLACK MAGIC
-    ofxBlackMagic blackMagic;
+    //INPUT VIDEO CHOICE
     bool isUpdatingRight;
+#if INPUT_VIDEO == 0
+    ofVideoPlayer player;
+    ofParameter<bool> playerPause;
+    ofParameter<int> videoIndex;
+#elif INPUT_VIDEO == 1
+    ofxBlackMagic blackMagic;
+#elif INPUT_VIDEO == 2
+    //Camera Grabber ( webcam )
+    ofVideoGrabber videoGrabber;
+
+#endif
     
     int w;
     int h;
@@ -48,10 +59,6 @@ public:
     ofFbo fboBlur1;
     ofFbo fboBlur2;
     ofParameterGroup* pg;
-    ofVideoPlayer player;
-    ofParameter<bool> useOfVideoPlayer;
-    ofParameter<bool> playerPause;
-    ofParameter<int> videoIndex;
     ofParameter<int> skipStep;
     ofParameter<double> threshold;
     ofParameter<float> smooth;
@@ -61,6 +68,7 @@ public:
     ofShader shaderTreshHsv;
     ofShader shaderBlurX;
     ofShader shaderBlurY;
+    string name;
     
     
 };

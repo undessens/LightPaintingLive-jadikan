@@ -13,6 +13,7 @@
 #define FONT_MEDIUM 2
 #define FONT_SMALL 1
 
+
 class ofApp : public ofBaseApp{
 
     public:
@@ -37,6 +38,7 @@ class ofApp : public ofBaseApp{
     ofRectangle writeText(string msg, int x, int y, int size);
     void drawArraw( int x, int y, int w , bool isOpen);
     void drawGridArea();
+    void exportImage();
     // List of draw function , that return the height of their last draw
     int drawApp(ofRectangle lastElement);
     int drawInput(ofRectangle lastElement);
@@ -58,6 +60,7 @@ class ofApp : public ofBaseApp{
     ofParameter<int> bg_color;
     ofParameter<int> zoom_level;
     ofParameter<float> global_zoom;
+    ofParameter<bool> auto_export;
     
     //Syphon output
     ofxSyphonServer syphonOut;
@@ -107,6 +110,11 @@ class ofApp : public ofBaseApp{
     int fontBigSize;
     int fontMediumSize;
     int fontSmallSize;
+    
+    //Auto export jpg image
+    ofImage exportOfImage;
+    ofPixels exportPixels;
+    bool exportFlag;
     
     
     

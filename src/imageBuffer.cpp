@@ -37,21 +37,18 @@ void ImageBuffer::setup(){
     
     // GUI MANAGEMENT
     
-    reset.addListener(this, &ImageBuffer::resetBuffer);
+    //Deactivate because need to export in ofApp before resetting
+    //reset.addListener(this, &ImageBuffer::resetBuffer);
+    
+    record.addListener(this, &ImageBuffer::setRecordPause);
     
     pg->setName("Image_buffer");
     pg->add(isShown.set("show", true));
-    //pg->add(currentImage.set("Image index", 0, 0, nbImage));
-    pg->add(reset.set("Reset", false));
-    //pg->add(nbTextureMax.set("History", 60, 1, 400));
-    //pg->add(listOfTextureIndex.set("BufferIndex", 5, 0, 59));
-    //pg->add(opacityAtDraw.set("Opacity", 255, 100, 255));
-    pg->add(darkerInTime.set("History Darker", 0, 0, 35));
-    //pg->add(shaderKeepDark.set("Shader :Keep Dark", 0, 0, 1));
-    //pg->add(shaderAlphaThresholdBg.set("Shader :Alpha Tresh bg", 0.1, 0, 1));
-    //pg->add(shaderAlphaThresholdNi.set("Shader :Alpha Tresh ni", 0.1, 0, 1));
-    pg->add(shaderLumThreshold.set("Threshold luminance", 0, -1, 1));
-    pg->add(bypass.set("ByPass", false));
+    pg->add(activeInput.set("active_input", false));
+    pg->add(record.set("record", false));
+    pg->add(reset.set("reset", false));
+    pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
+    pg->add(darkerInTime.set("history_darker", 0, 0, 35));
     
     /*
      ofParameter<float>shaderAlphaThresholdBg;
@@ -114,17 +111,14 @@ void ImageBuffer::setup(){
 }
 
 //--------------------------------------------------------------
-void ImageBuffer::update(ofFbo* input, int frameNum){
+void ImageBuffer::update(ofFbo* input){
 
     
     //USING SHADER : GREAT
     bgFbo.begin();
     
-    if(!bypass){
+    if(record && activeInput){
         shader_add.begin();
-        shader_add.setUniform1f("keep_dark", shaderKeepDark);
-        shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
-        shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
         shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
         shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
         //FBO drawing in itself.
@@ -149,11 +143,8 @@ void ImageBuffer::update(ofFbo* input, int frameNum){
     finalFbo.begin();
     ofClear(0, 0, 0,0);
     bgFbo.draw(0,0);
-    if(bypass){
+    if(!record && activeInput){
         shader_add.begin();
-        shader_add.setUniform1f("keep_dark", shaderKeepDark);
-        shader_add.setUniform1f("shaderAlphaThresholdBg", shaderAlphaThresholdBg);
-        shader_add.setUniform1f("shaderAlphaThresholdNi", shaderAlphaThresholdNi);
         shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
         shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
         //FBO drawing in itself.
@@ -183,9 +174,8 @@ void ImageBuffer::draw(ofRectangle rect){
 }
 
 //--------------------------------------------------------------
-void ImageBuffer::resetBuffer(bool &isReset){
+void ImageBuffer::resetBuffer(){
     
-    if(isReset){
     
         bgFbo.begin();
         //0 means transparent
@@ -194,7 +184,12 @@ void ImageBuffer::resetBuffer(bool &isReset){
         ofClear(0,0,0, 0);
         bgFbo.end();
         
-    }
     
+}
+
+//--------------------------------------------------------------
+void ImageBuffer::setRecordPause(bool &isRecord){
+    
+    activeInput = isRecord;
 }
 

@@ -22,10 +22,11 @@ public:
     ImageBuffer();
     ImageBuffer( ofParameterGroup* pg, int w, int h, int nbImage);
     void setup();
-    void update(ofFbo* input, int frameNum);
+    void update(ofFbo* input);
     void draw(int, int, int ,int ); // draw all active images
     void draw(ofRectangle r ); // draw all active images
-    void resetBuffer(bool &isReset);
+    void resetBuffer();
+    void setRecordPause(bool &isRecord);
     
     int w;
     int h;
@@ -39,14 +40,12 @@ public:
     ofParameterGroup* pg;
     ofParameter<int> currentImage;
     ofParameter<int> darkerInTime;
-    ofParameter<int> opacityAtDraw;
-    ofParameter<float>shaderKeepDark;
-    ofParameter<float>shaderAlphaThresholdBg;
-    ofParameter<float>shaderAlphaThresholdNi;
     ofParameter<float>shaderLumThreshold;
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
-    ofParameter<bool> bypass;
+    ofParameter<bool> record;
+    ofParameter<bool> activeInput;
+    
     
     //SHADER SOLUTION
     ofShader shader_add;

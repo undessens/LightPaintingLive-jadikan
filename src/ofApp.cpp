@@ -142,6 +142,7 @@ void ofApp::setup(){
     pg.add(bg_color.set("BackGround", 35, 0, 255));
     pg.add(zoom_level.set("Zoom Image", 2, 1, 10));
     pg.add(global_zoom.set("App Zoom", 2, 1, 8));
+    pg.add(auto_export.set("Auto export", false));
     gui.setup(pg);
     gui.add(pg_input);
     gui.add(pg_imageBuffer);
@@ -183,6 +184,9 @@ void ofApp::setup(){
     float actualZoom = global_zoom;
     setGlobalZoom(actualZoom);
     
+    //EXPORT IMAGE
+    exportFlag = false;
+    
 
 }
 
@@ -194,13 +198,16 @@ void ofApp::update(){
 
     //update module one by one
     input->update();
-    imageBuffer->update(&(input->fbo), input->player.getCurrentFrame() );
+    imageBuffer->update(&(input->fbo) );
     
     mask->update(&imageBuffer->finalFbo);
     
+    // NOT USED
+    /*
     fboPost.begin();
     mask->draw(0,0,input_w,input_h);
     fboPost.end();
+    */
     
     //Zoom updating
     float zoomRatioX = 0;
@@ -259,6 +266,24 @@ void ofApp::update(){
     
     updateZoom();
     sync.update();
+    
+    //Update auto export flag
+    if(imageBuffer->reset== true && auto_export && exportFlag ){
+        
+        exportImage();
+        // disable flag after export
+        exportFlag = false;
+    }
+    if(imageBuffer->reset==false && auto_export && !exportFlag ){
+        exportFlag = true; // arm the flag here
+    }
+    
+    
+    if(imageBuffer->reset){
+        imageBuffer->resetBuffer();
+        //ofSleepMillis(500);
+        imageBuffer->reset = false;
+    }
  
  
  
@@ -272,6 +297,8 @@ void ofApp::draw(){
    
     ofSetColor(255, 255, 255);
     ofFill();
+    
+    
     syphonOut.publishTexture(&(mask->fbo.getTexture()));
 
     ofSetColor(255,255,255);
@@ -513,16 +540,13 @@ int ofApp::drawInput(ofRectangle lastElement){
         
         //Input from file or black Magic, small text
         string inputString  = "from : ";
-        if(input->useOfVideoPlayer){
-            inputString += " video file";
-        }else{
-            inputString += " black magic";
-        }
+
+        inputString += input->name;
         ofRectangle inputRect = (writeText(inputString, areaInput.x, areaInput.y + totalH, FONT_SMALL));
         
         
         //Black magic is OK or error, small text
-        string blackMagic = " Black Magic :";
+        string blackMagic = " new frame :";
         if(input->isUpdatingRight){
             blackMagic += "OK";
         }else{
@@ -608,6 +632,20 @@ int ofApp::drawFinal(ofRectangle lastElement){
     
 }
 
+//--------------------------------------------------------------
+void ofApp::exportImage(){
+    
+    exportPixels.clear();
+    exportOfImage.clear();
+    mask->fbo.getTexture().readToPixels(exportPixels);
+    
+    exportOfImage.setFromPixels(exportPixels);
+    string title = ofToString(ofGetYear())+"-"+ofToString(ofGetMonth())+"-"+ofToString(ofGetDay());
+    title += "---"+ofToString(ofGetHours())+ofToString(ofGetMinutes())+"-"+ofToString(ofGetSeconds());
+    title += ".jpg";
+    exportOfImage.save("export/"+title);
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
@@ -616,7 +654,7 @@ void ofApp::keyPressed(int key){
     switch (key) {
         case ' ':
             bool reset = true;
-            imageBuffer->resetBuffer(reset);
+            imageBuffer->resetBuffer();
         break;
             
 

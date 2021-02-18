@@ -23,26 +23,39 @@ Input::Input(ofParameterGroup* _pg,
 
 //--------------------------------------------------------------
 void Input::setup(){
-    
-    useOfVideoPlayer.addListener(this,&Input::setUseVideo);
+  
+#if INPUT_VIDEO == 0
     videoIndex.addListener(this, &Input::setVideoIndex);
     playerPause.addListener(this, &Input::setVideoPause);
+#endif
     
     // GUI MANAGEMENT
     pg->setName("Input");
     pg->add(isShown.set("show", true));
-    pg->add(useOfVideoPlayer.set("use of video", true));
+#if INPUT_VIDEO == 0
     pg->add(videoIndex.set("video index", 3, 1, 7));
+    pg->add(playerPause.set("Video Pause", false));
+    
+#endif
     pg->add(threshold.set("threshold", 0.1,0, 1.0));
     pg->add(smooth.set("threshold curve", 0, 0, 1));
     pg->add(transparency.set("transparency", 0, 0, 1));
-    pg->add(playerPause.set("Video Pause", false));
     pg->add(blur.set("blur", 0, 0, 10));
     pg->add(skipStep.set("Skip step", 2, 0, 3));
     
+#if INPUT_VIDEO == 0
+    name = "VIDEO PLAYER";
+#elif INPUT_VIDEO == 1
     //BLACK MAGIC
     blackMagic.setup(1920, 1080, 30);
-    
+    name = "BLACK MAGIC";
+#elif INPUT_VIDEO == 2
+    // VIDEO GRABBER
+    videoGrabberInit();
+    name = "WEB CAM";
+#endif
+
+
     // FBO CLEAR
     fbo.allocate(w, h, GL_RGBA);
     fbo.begin();
@@ -85,19 +98,20 @@ void Input::setup(){
     
 }
 
-//--------------------------------------------------------------
-void Input::loadMovie(string name){
-    
-    player.load(name);
-    player.play();
-    
-}
 
 //--------------------------------------------------------------
 void Input::update(){
     
     //Update blackmagic
+#if INPUT_VIDEO == 0
+    player.update();
+    isUpdatingRight = player.isFrameNew();
+#elif INPUT_VIDEO == 1
     isUpdatingRight = blackMagic.update();
+#elif INPUT_VIDEO == 2
+    isUpdatingRight = true;
+    videoGrabber.update();
+#endif
     
     
     //Threshold
@@ -107,18 +121,16 @@ void Input::update(){
     shaderTreshHsv.setUniform1f("threshold", threshold);
     shaderTreshHsv.setUniform1f("threshold_smooth", smooth);
     shaderTreshHsv.setUniform1f("transparency_smooth", transparency);
-    if(useOfVideoPlayer){
-        player.update();
-        ofSetColor(255, 255, 255, 255);
+    ofSetColor(255, 255, 255, 255);
+#if INPUT_VIDEO == 0
         player.draw(0, 0, w, h);
-        
-    }else{
-        ofSetColor(255, 255, 255, 255);
+#elif INPUT_VIDEO == 1
         blackMagic.drawColor();
-        //ofSetColor(0, 255, 0, 255);
-        //ofFill();
-        //ofDrawRectangle(0, 0, w, h);
-    }
+#elif INPUT_VIDEO == 2
+        videoGrabber.draw(0, 0, fboTresh.getWidth(), fboTresh.getHeight());
+#endif
+
+    
     shaderTreshHsv.end();
     fboTresh.end();
     
@@ -171,29 +183,7 @@ void Input::update(){
     
 }
 
-//--------------------------------------------------------------
-void Input::setUseVideo(bool &isUse){
-    
-    if(isUse){
-        
-        fbo.begin();
-        ofClear(0, 0, 0, 255);
-        fbo.end();
-        player.stop();
-        player.firstFrame();
-        player.play();
-        
-    }else{
-        
-        player.stop();
-        fbo.begin();
-        ofClear(0, 255, 0, 127);
-        fbo.end();
-    }
-    
-}
-
-
+#if INPUT_VIDEO == 0
 //--------------------------------------------------------------
 void Input::setVideoIndex(int &newIndex){
     
@@ -214,12 +204,24 @@ void Input::setVideoIndex(int &newIndex){
     
     
 }
+#endif
 
+#if INPUT_VIDEO == 0
 //--------------------------------------------------------------
 void Input::setVideoPause(bool &isPause){
     
     player.setPaused(isPause);
     
 }
+#endif
 
+#if INPUT_VIDEO == 2
+//--------------------------------------------------------------
+void Input::videoGrabberInit(){
+    
+videoGrabber.setDeviceID(1);
+videoGrabber.setDesiredFrameRate(30);
+videoGrabber.initGrabber(1280, 720);
 
+}
+#endif

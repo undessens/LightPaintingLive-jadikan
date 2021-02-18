@@ -90,3 +90,5 @@ Desktop.ini
 *.pbxproj
 *.xcscheme
 .xcconfig
+bin/data/settings.xml
+bin/data/export/*
