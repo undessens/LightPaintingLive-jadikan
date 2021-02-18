@@ -3,8 +3,12 @@
 # but not the data folder
 ###########################
 
-*/bin/*
-!*/bin/data/
+/bin/*
+/bin/data/settings.xml
+!/bin/data/
+
+/bin/data/export/*
+
 
 ###########################
 # Heavy files
@@ -90,5 +94,4 @@ Desktop.ini
 *.pbxproj
 *.xcscheme
 .xcconfig
-bin/data/settings.xml
-bin/data/export/*
+
