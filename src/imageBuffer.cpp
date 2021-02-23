@@ -46,6 +46,7 @@ void ImageBuffer::setup(){
     pg->add(isShown.set("show", true));
     pg->add(activeInput.set("active_input", false));
     pg->add(record.set("record", false));
+    pg->add(recordStrobeSpeed.set("rec_strobe_speed", 1, 1, 100));
     pg->add(reset.set("reset", false));
     pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
     pg->add(darkerInTime.set("history_darker", 0, 0, 35));
@@ -78,6 +79,9 @@ void ImageBuffer::setup(){
         }
     #endif
     shader_test.load("mask/img_mask.png");
+    
+    //Record Strobe. Allows to strobe the record, and add to buffer One image over X
+    recordStrobe = true;
     
     
     /* LONG STORY ABOUT HISTORY AND TEXTURE
@@ -113,11 +117,15 @@ void ImageBuffer::setup(){
 //--------------------------------------------------------------
 void ImageBuffer::update(ofFbo* input){
 
+    //Strobe recorder
+   // If recordStrobeSpeed = 100 = 100% , all images are added to buffer
+    // If recordStrobeSpeed = 4, one image over 4 is
+    recordStrobe = ((ofGetFrameNum() % recordStrobeSpeed ) == 0 );
     
     //USING SHADER : GREAT
     bgFbo.begin();
     
-    if(record && activeInput){
+    if(record && activeInput && recordStrobe){
         shader_add.begin();
         shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
         shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
@@ -170,6 +178,12 @@ void ImageBuffer::draw(int x,int y,int width, int height){
 void ImageBuffer::draw(ofRectangle rect){
     
     finalFbo.draw(rect);
+    if(recordStrobe && record){
+        ofNoFill();
+        ofSetColor(255);
+        ofDrawRectangle(rect);
+    }
+
 
 }
 

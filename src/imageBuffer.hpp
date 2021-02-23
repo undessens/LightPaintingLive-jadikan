@@ -45,6 +45,8 @@ public:
     ofParameter<bool> isShown;
     ofParameter<bool> record;
     ofParameter<bool> activeInput;
+    ofParameter<int> recordStrobeSpeed;
+    bool recordStrobe;
     
     
     //SHADER SOLUTION
