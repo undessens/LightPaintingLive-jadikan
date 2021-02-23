@@ -70,8 +70,8 @@ void Mask::setup(){
     
     pg->setName("Mask");
     pg->add(isShown.set("show", true));
-    pg->add(bgIndex.set("Background index", 0 ,0, listOfBackground.size()));
-    pg->add(maskIndex.set("Mask index",0, 0, listOfMask.size()));
+    pg->add(bgIndex.set("background_index", 1 ,0, listOfBackground.size()));
+    pg->add(maskIndex.set("mask_index",0, 0, listOfMask.size()));
     
     // FBO CLEAR
     fbo.allocate(w, h, GL_RGBA);

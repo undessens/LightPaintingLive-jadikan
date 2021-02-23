@@ -33,15 +33,15 @@ void Input::setup(){
     pg->setName("Input");
     pg->add(isShown.set("show", true));
 #if INPUT_VIDEO == 0
-    pg->add(videoIndex.set("video index", 3, 1, 7));
-    pg->add(playerPause.set("Video Pause", false));
+    pg->add(videoIndex.set("video_index", 3, 1, 7));
+    pg->add(playerPause.set("video_pause", false));
     
 #endif
     pg->add(threshold.set("threshold", 0.1,0, 1.0));
-    pg->add(smooth.set("threshold curve", 0, 0, 1));
+    pg->add(smooth.set("threshold_curve", 0, 0, 1));
     pg->add(transparency.set("transparency", 0, 0, 1));
     pg->add(blur.set("blur", 0, 0, 10));
-    pg->add(skipStep.set("Skip step", 2, 0, 3));
+    pg->add(skipStep.set("skip_step", 2, 0, 3));
     
 #if INPUT_VIDEO == 0
     name = "VIDEO PLAYER";

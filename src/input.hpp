@@ -60,7 +60,7 @@ public:
     ofFbo fboBlur2;
     ofParameterGroup* pg;
     ofParameter<int> skipStep;
-    ofParameter<double> threshold;
+    ofParameter<double> threshold; // why double ???
     ofParameter<float> smooth;
     ofParameter<float> transparency;
     ofParameter<float> blur;
