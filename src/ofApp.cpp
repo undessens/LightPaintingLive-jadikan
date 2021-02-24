@@ -147,7 +147,7 @@ void ofApp::setup(){
     gui.add(pg_input);
     gui.add(pg_imageBuffer);
     gui.add(pg_mask);
-    sync.setup(pg, 12343, "0.0.0.0", 12341);
+    sync.setup(pg, 12343, "127.0.0.1", 12341);
     
     
 
@@ -653,8 +653,10 @@ void ofApp::keyPressed(int key){
     zoomLevelEntry = 0;
     switch (key) {
         case ' ':
-            bool reset = true;
             imageBuffer->resetBuffer();
+        break;
+        case 'e':
+            exportImage();
         break;
             
 
