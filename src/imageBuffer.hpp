@@ -39,13 +39,13 @@ public:
     ofParameter<int> listOfTextureIndex; // nb Max of history
     ofParameterGroup* pg;
     ofParameter<int> currentImage;
-    ofParameter<int> darkerInTime;
+    ofParameter<float> darkerInTime;
     ofParameter<float>shaderLumThreshold;
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
     ofParameter<bool> record;
     ofParameter<bool> activeInput;
-    ofParameter<int> recordStrobeSpeed;
+    ofParameter<float> recordStrobeSpeed;
     bool recordStrobe;
     
     

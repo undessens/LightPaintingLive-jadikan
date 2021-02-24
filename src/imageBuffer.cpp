@@ -46,10 +46,10 @@ void ImageBuffer::setup(){
     pg->add(isShown.set("show", true));
     pg->add(activeInput.set("active_input", false));
     pg->add(record.set("record", false));
-    pg->add(recordStrobeSpeed.set("rec_strobe_speed", 1, 1, 100));
+    pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 0.5));
     pg->add(reset.set("reset", false));
     pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
-    pg->add(darkerInTime.set("history_darker", 0, 0, 35));
+    pg->add(darkerInTime.set("history_darker", 0, 0, 1));
     
     /*
      ofParameter<float>shaderAlphaThresholdBg;
@@ -118,9 +118,11 @@ void ImageBuffer::setup(){
 void ImageBuffer::update(ofFbo* input){
 
     //Strobe recorder
-   // If recordStrobeSpeed = 100 = 100% , all images are added to buffer
-    // If recordStrobeSpeed = 4, one image over 4 is
-    recordStrobe = ((ofGetFrameNum() % recordStrobeSpeed ) == 0 );
+   // If recordStrobeSpeed = 0 = 100% , all images are added to buffer
+    // If recordStrobeSpeed = 1, one image over 101 is taken
+    // 0.01 is added in order to have X % 1 as a minimum value
+    int recordStrobeFinalValue = (recordStrobeSpeed + 0.01 )*100;
+    recordStrobe = ((ofGetFrameNum() % recordStrobeFinalValue ) == 0 );
     
     //USING SHADER : GREAT
     bgFbo.begin();
@@ -142,7 +144,7 @@ void ImageBuffer::update(ofFbo* input){
     //Should be replaced to something related to time;
     ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
     ofFill();
-    ofSetColor(255-darkerInTime);
+    ofSetColor(255-(darkerInTime*35));
     ofDrawRectangle(0,0,w,h);
     ofDisableBlendMode();
     bgFbo.end();
