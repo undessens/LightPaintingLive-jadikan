@@ -50,6 +50,7 @@ class ofApp : public ofBaseApp{
     //GUI
     ofxPanel gui;
     ofxOscParameterSync sync;
+    ofxOscSender osc_sender;
     ofParameterGroup pg;
     ofParameterGroup pg_input;
     ofParameterGroup pg_imageBuffer;

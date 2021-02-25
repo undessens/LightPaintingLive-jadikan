@@ -20,10 +20,11 @@ ImageBuffer::ImageBuffer(){}
 
 
 //--------------------------------------------------------------
-ImageBuffer::ImageBuffer( ofParameterGroup* _pg, int _w, int _h, int _nbImage){
+ImageBuffer::ImageBuffer( ofParameterGroup* _pg, ofxOscSender* _sender, int _w, int _h, int _nbImage){
     
     //Geometry
     pg = _pg;
+    oscSender = _sender;
     w = _w;
     h = _h;
     nbImage = _nbImage;
@@ -46,7 +47,6 @@ void ImageBuffer::setup(){
     pg->add(isShown.set("show", true));
     pg->add(activeInput.set("active_input", false));
     pg->add(record.set("record", false));
-    pg->add(record_feedback.set("record_feedback", false));
     pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 0.5));
     pg->add(reset.set("reset", false));
     pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
@@ -208,6 +208,11 @@ void ImageBuffer::resetBuffer(){
 void ImageBuffer::setRecordPause(bool &isRecord){
     
     activeInput = isRecord;
-    record_feedback = isRecord;
+    
+    ofxOscMessage msg ;
+    msg.setAddress("/main/Image_buffer/record");
+    msg.addBoolArg(isRecord);
+    oscSender->sendMessage(msg);
+    msg.clear();
 }
 

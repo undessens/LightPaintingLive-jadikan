@@ -20,7 +20,7 @@ class ImageBuffer
 public:
     
     ImageBuffer();
-    ImageBuffer( ofParameterGroup* pg, int w, int h, int nbImage);
+    ImageBuffer( ofParameterGroup* pg, ofxOscSender* oscSender, int w, int h, int nbImage);
     void setup();
     void update(ofFbo* input);
     void draw(int, int, int ,int ); // draw all active images
@@ -44,10 +44,10 @@ public:
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
     ofParameter<bool> record;
-    ofParameter<bool> record_feedback;
     ofParameter<bool> activeInput;
     ofParameter<float> recordStrobeSpeed;
     bool recordStrobe;
+    ofxOscSender* oscSender;
     
     
     //SHADER SOLUTION

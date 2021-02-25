@@ -131,7 +131,7 @@ void ofApp::setup(){
     
     //INSTANCIATE ALL MODULE
     input = new Input(&pg_input, input_w, input_h);
-    imageBuffer = new ImageBuffer(&pg_imageBuffer, input_w, input_h, 5);
+    imageBuffer = new ImageBuffer(&pg_imageBuffer, &osc_sender, input_w, input_h, 5);
     mask= new Mask(&pg_mask, input_w, input_h);
     
     //Callback function
@@ -148,6 +148,7 @@ void ofApp::setup(){
     gui.add(pg_imageBuffer);
     gui.add(pg_mask);
     sync.setup(pg, 12343, "127.0.0.1", 12341);
+    osc_sender.setup("127.0.0.1", 12342);
     
     
 
