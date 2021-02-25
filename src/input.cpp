@@ -51,7 +51,13 @@ void Input::setup(){
     name = "BLACK MAGIC";
 #elif INPUT_VIDEO == 2
     // VIDEO GRABBER
-    videoGrabberInit();
+    videoGrabberIndex.addListener(this, &Input::videoGrabberInit);
+    std::vector<ofVideoDevice> listOfDevice = videoGrabber.listDevices();
+    for(std::vector<ofVideoDevice>::iterator it = listOfDevice.begin(); it<listOfDevice.end(); ++it ){
+        ofLog(OF_LOG_NOTICE, "Video Grabber Device :"+it->deviceName+" : "+it->hardwareName);
+    }
+    
+    pg->add(videoGrabberIndex.set("webcam_index", 1, 0, 10));
     name = "WEB CAM";
 #endif
 
@@ -217,9 +223,10 @@ void Input::setVideoPause(bool &isPause){
 
 #if INPUT_VIDEO == 2
 //--------------------------------------------------------------
-void Input::videoGrabberInit(){
+void Input::videoGrabberInit(int &index){
     
-videoGrabber.setDeviceID(1);
+videoGrabber.close();
+videoGrabber.setDeviceID(index);
 videoGrabber.setDesiredFrameRate(30);
 videoGrabber.initGrabber(1280, 720);
 

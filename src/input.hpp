@@ -15,7 +15,7 @@
 #include "ofxOscParameterSync.h"
 
 //Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
-#define INPUT_VIDEO 1
+#define INPUT_VIDEO 2
 
 /*
  
@@ -34,14 +34,13 @@ public:
     Input( ofParameterGroup* pg, int w, int h);
     void setup();
     void update();
-    void setVideoIndex(int &newIndex);
-    void setVideoPause(bool &isPause);
-    void videoGrabberInit();
     
     //INPUT VIDEO CHOICE
     bool isUpdatingRight;
 #if INPUT_VIDEO == 0
     ofVideoPlayer player;
+    void setVideoIndex(int &newIndex);
+    void setVideoPause(bool &isPause);
     ofParameter<bool> playerPause;
     ofParameter<int> videoIndex;
 #elif INPUT_VIDEO == 1
@@ -49,6 +48,8 @@ public:
 #elif INPUT_VIDEO == 2
     //Camera Grabber ( webcam )
     ofVideoGrabber videoGrabber;
+    ofParameter<int> videoGrabberIndex;
+    void videoGrabberInit(int &newIndex);
 
 #endif
     

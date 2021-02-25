@@ -44,6 +44,7 @@ public:
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
     ofParameter<bool> record;
+    ofParameter<bool> record_feedback;
     ofParameter<bool> activeInput;
     ofParameter<float> recordStrobeSpeed;
     bool recordStrobe;

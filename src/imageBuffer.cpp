@@ -46,6 +46,7 @@ void ImageBuffer::setup(){
     pg->add(isShown.set("show", true));
     pg->add(activeInput.set("active_input", false));
     pg->add(record.set("record", false));
+    pg->add(record_feedback.set("record_feedback", false));
     pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 0.5));
     pg->add(reset.set("reset", false));
     pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
@@ -207,5 +208,6 @@ void ImageBuffer::resetBuffer(){
 void ImageBuffer::setRecordPause(bool &isRecord){
     
     activeInput = isRecord;
+    record_feedback = isRecord;
 }
 
