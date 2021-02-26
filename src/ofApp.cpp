@@ -198,6 +198,7 @@ void ofApp::update(){
     ofEnableAlphaBlending();
 
     //update module one by one
+    sync.update();
     input->update();
     imageBuffer->update(&(input->fbo) );
     
@@ -266,7 +267,7 @@ void ofApp::update(){
     }
     
     updateZoom();
-    sync.update();
+    
     
     //Update auto export flag
     if(imageBuffer->reset== true && auto_export && exportFlag ){
