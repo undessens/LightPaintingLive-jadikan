@@ -44,9 +44,11 @@ public:
     ofParameter<bool> reset;
     ofParameter<bool> isShown;
     ofParameter<bool> record;
+    ofParameter<bool> add_substract;
     ofParameter<bool> activeInput;
     ofParameter<float> recordStrobeSpeed;
     bool recordStrobe;
+    int recordStrobeIndex;
     ofxOscSender* oscSender;
     
     

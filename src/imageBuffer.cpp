@@ -47,9 +47,11 @@ void ImageBuffer::setup(){
     pg->add(isShown.set("show", true));
     pg->add(activeInput.set("active_input", false));
     pg->add(record.set("record", false));
-    pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 0.5));
+    pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 1));
+    pg->add(add_substract.set("add_substract", true));
     pg->add(reset.set("reset", false));
-    pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
+    //pg->add(shaderLumThreshold.set("threshold_luminance", 0, -1, 1));
+    shaderLumThreshold.set("threshold_luminance", 0, -1, 1); // Don't add this to gui;
     pg->add(darkerInTime.set("history_darker", 0, 0, 1));
     
     /*
@@ -65,13 +67,11 @@ void ImageBuffer::setup(){
     finalFbo.end();
     
     bgFbo.allocate(w, h, GL_RGBA32F_ARB);
-    bgFbo.begin();
-    ofClear(0,0,0, 0);
-    bgFbo.end();
+    resetBuffer();
     
     // SHADER SOLUTION
     #ifdef TARGET_OPENGLES
-        shader_add.load("shadersES2/shader");
+        shader_add.load("shadersES2/shader_add	");
     #else
         if(ofIsGLProgrammableRenderer()){
             shader_add.load("shadersGL3/shader_add");
@@ -83,6 +83,7 @@ void ImageBuffer::setup(){
     
     //Record Strobe. Allows to strobe the record, and add to buffer One image over X
     recordStrobe = true;
+    recordStrobeIndex = 0;
     
     
     /* LONG STORY ABOUT HISTORY AND TEXTURE
@@ -112,7 +113,6 @@ void ImageBuffer::setup(){
     grayImage.allocate(w, h);
     colorImage.allocate(w,h);
     
-    
 }
 
 //--------------------------------------------------------------
@@ -123,7 +123,7 @@ void ImageBuffer::update(ofFbo* input){
     // If recordStrobeSpeed = 1, one image over 101 is taken
     // 0.01 is added in order to have X % 1 as a minimum value
     int recordStrobeFinalValue = (recordStrobeSpeed + 0.01 )*100;
-    recordStrobe = ((ofGetFrameNum() % recordStrobeFinalValue ) == 0 );
+    recordStrobe = (( (ofGetFrameNum() - recordStrobeIndex ) % recordStrobeFinalValue ) == 0 );
     
     //USING SHADER : GREAT
     bgFbo.begin();
@@ -131,6 +131,7 @@ void ImageBuffer::update(ofFbo* input){
     if(record && activeInput && recordStrobe){
         shader_add.begin();
         shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
+        shader_add.setUniform1i("add_substract", add_substract? 1 : 0);
         shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
         //FBO drawing in itself.
         input->draw(0, 0);
@@ -138,7 +139,6 @@ void ImageBuffer::update(ofFbo* input){
     }
 
     bgFbo.end();
-    
     
     // ADD BLACK RECTANGLE FOR DARKER IN TIME
     bgFbo.begin();
@@ -163,7 +163,6 @@ void ImageBuffer::update(ofFbo* input){
         shader_add.end();
     }
     finalFbo.end();
-    
     
 }
 
@@ -198,7 +197,7 @@ void ImageBuffer::resetBuffer(){
         //0 means transparent
         //ofClear(0,0,0, 255);
         // let tranparent background of ImageBuffer
-        ofClear(0,0,0, 0);
+        ofClear(0,0,0, 255);
         bgFbo.end();
         
     
@@ -208,11 +207,13 @@ void ImageBuffer::resetBuffer(){
 void ImageBuffer::setRecordPause(bool &isRecord){
     
     activeInput = isRecord;
-    
     ofxOscMessage msg ;
     msg.setAddress("/main/Image_buffer/record");
     msg.addBoolArg(isRecord);
     oscSender->sendMessage(msg);
     msg.clear();
+    if(isRecord){
+        recordStrobeIndex = ofGetFrameNum();
+    }
 }
 

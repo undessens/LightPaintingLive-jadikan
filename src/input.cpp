@@ -39,9 +39,10 @@ void Input::setup(){
 #endif
     pg->add(threshold.set("threshold", 0.1,0, 1.0));
     pg->add(smooth.set("threshold_curve", 0, 0, 1));
-    pg->add(transparency.set("transparency", 0, 0, 1));
-    pg->add(blur.set("blur", 0, 0, 10));
-    pg->add(skipStep.set("skip_step", 2, 0, 3));
+    //pg->add(transparency.set("transparency", 0, 0, 1));
+    transparency.set("transparency", 0, 0, 1);
+    //pg->add(blur.set("blur", 0, 0, 10));
+    //pg->add(skipStep.set("skip_step", 2, 0, 3));
     
 #if INPUT_VIDEO == 0
     name = "VIDEO PLAYER";
@@ -73,6 +74,7 @@ void Input::setup(){
     ofClear(255,255,255, 0);
     fboTresh.end();
     // FBO CLEAR
+    /*
     fboBlur1.allocate(w, h, GL_RGBA);
     fboBlur1.begin();
     ofClear(255,255,255, 0);
@@ -82,6 +84,7 @@ void Input::setup(){
     fboBlur2.begin();
     ofClear(255,255,255, 0);
     fboBlur2.end();
+     */
     
     // SHADER
 #ifdef TARGET_OPENGLES
@@ -92,8 +95,10 @@ void Input::setup(){
 
     }else{
         shaderTreshHsv.load("shadersGL2/shaderTreshHsv");
+        /*
         shaderBlurX.load("shadersGL2/shaderBlurX");
         shaderBlurY.load("shadersGL2/shaderBlurY");
+         */
 
     }
 #endif
@@ -140,6 +145,8 @@ void Input::update(){
     shaderTreshHsv.end();
     fboTresh.end();
     
+    /*
+    
     // BLUR 1
     fboBlur1.begin();
     ofClear(255,255,255, 0);
@@ -161,11 +168,15 @@ void Input::update(){
     shaderBlurY.end();
     ofDisableAlphaBlending();
     fboBlur2.end();
+     
+     */
     
     // FINAL 2
     fbo.begin();
     ofClear(255,255,255, 0);
     ofEnableAlphaBlending();
+    fboTresh.draw(0,0);
+    /*
     switch (skipStep) {
         case 0:
             fboBlur2.draw(0,0);
@@ -180,6 +191,8 @@ void Input::update(){
         default:
             break;
     }
+     */
+    
     ofDisableAlphaBlending();
     fbo.end();	
     

@@ -69,8 +69,8 @@ void Mask::setup(){
 
     
     pg->setName("Mask");
-    pg->add(isShown.set("show", true));
-    pg->add(bgIndex.set("background_index", 1 ,0, listOfBackground.size()));
+    pg->add(isShown.set("show", false));
+    pg->add(bgIndex.set("background_index", 0 ,0, listOfBackground.size()));
     pg->add(maskIndex.set("mask_index",0, 0, listOfMask.size()));
     
     // FBO CLEAR
@@ -89,22 +89,22 @@ void Mask::update(ofFbo *input){
     clearFbo();
     
     fbo.begin();
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        
-        if(bgIndex>0){
-            listOfBackground[bgIndex-1].draw(0, 0);
-            ofSetColor(255, 255, 255,255);
-        }
-        
-        input->draw(0,0);
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+    if(bgIndex>0){
+        listOfBackground[bgIndex-1].draw(0, 0);
+        ofSetColor(255, 255, 255,255);
+    }
+    
+    input->draw(0,0);
+    ofDisableBlendMode();
+    
+    if(maskIndex>0){
+        ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+        ofSetColor(255, 255, 255,255);
+        listOfMask[maskIndex-1].draw(0, 0);
         ofDisableBlendMode();
-        
-        if(maskIndex>0){
-            ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
-            ofSetColor(255, 255, 255,255);
-            listOfMask[maskIndex-1].draw(0, 0);
-            ofDisableBlendMode();
-        }
+    }
     
     fbo.end();
     

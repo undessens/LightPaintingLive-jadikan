@@ -15,7 +15,7 @@
 #include "ofxOscParameterSync.h"
 
 //Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
-#define INPUT_VIDEO 2
+#define INPUT_VIDEO 0
 
 /*
  
@@ -50,15 +50,14 @@ public:
     ofVideoGrabber videoGrabber;
     ofParameter<int> videoGrabberIndex;
     void videoGrabberInit(int &newIndex);
-
 #endif
     
     int w;
     int h;
     ofFbo fbo;
     ofFbo fboTresh;
-    ofFbo fboBlur1;
-    ofFbo fboBlur2;
+    //ofFbo fboBlur1;
+    //ofFbo fboBlur2;
     ofParameterGroup* pg;
     ofParameter<int> skipStep;
     ofParameter<float> threshold; 
@@ -67,8 +66,8 @@ public:
     ofParameter<float> blur;
     ofParameter<bool> isShown;
     ofShader shaderTreshHsv;
-    ofShader shaderBlurX;
-    ofShader shaderBlurY;
+    //ofShader shaderBlurX;
+    //ofShader shaderBlurY;
     string name;
     
     
