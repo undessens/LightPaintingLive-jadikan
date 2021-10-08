@@ -127,7 +127,7 @@ void ofApp::setup(){
     input_w = 1920;
     input_h = 1080;
     ofBackground(100);
-    ofSetFrameRate(30);
+    ofSetFrameRate(APP_FRAMERATE);
     
     //INSTANCIATE ALL MODULE
     input = new Input(&pg_input, input_w, input_h);
@@ -548,13 +548,17 @@ int ofApp::drawInput(ofRectangle lastElement){
         
         
         //Black magic is OK or error, small text
-        string blackMagic = " new frame :";
+        string isNewFrame = "new frame: ";
         if(input->isUpdatingRight){
-            blackMagic += "OK";
+            isNewFrame += "X";
         }else{
-            blackMagic += "error";
+            isNewFrame += " ";
         }
-        writeText(blackMagic, areaInput.x + inputRect.width + marginW, areaInput.y + totalH, FONT_SMALL);
+        
+        //Show time from the last new frame : DEBUG TOOL
+        //if(input->isUpdatingRight)  isNewFrame += " : "+ofToString(ofGetSystemTimeMicros() - input->lastTimeNewFrame);
+        
+        writeText(isNewFrame, areaInput.x + inputRect.width + marginW, areaInput.y + totalH, FONT_SMALL);
         
         totalH += inputRect.height;
         
@@ -562,6 +566,8 @@ int ofApp::drawInput(ofRectangle lastElement){
         ofSetColor(255,255,255);
         transparentBg.draw(vignetteInput);
         input->fbo.draw(vignetteInput);
+                
+        
         totalH += vignetteInput.height;
     
     }

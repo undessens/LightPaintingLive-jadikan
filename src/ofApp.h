@@ -13,6 +13,8 @@
 #define FONT_MEDIUM 2
 #define FONT_SMALL 1
 
+#define APP_FRAMERATE 30
+
 
 class ofApp : public ofBaseApp{
 

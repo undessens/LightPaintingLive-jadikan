@@ -48,7 +48,7 @@ void Input::setup(){
     name = "VIDEO PLAYER";
 #elif INPUT_VIDEO == 1
     //BLACK MAGIC
-    blackMagic.setup(1920, 1080, 30);
+    blackMagic.setup(INPUT_WIDTH, INPUT_HEIGHT, INPUT_FRAMERATE);
     name = "BLACK MAGIC";
 #elif INPUT_VIDEO == 2
     // VIDEO GRABBER
@@ -61,6 +61,10 @@ void Input::setup(){
     pg->add(videoGrabberIndex.set("webcam_index", 1, 0, 10));
     name = "WEB CAM";
 #endif
+    
+    // ADITIONAL PARAMETERS
+    isUpdatingRight = false;
+    lastTimeNewFrame = 0;
 
 
     // FBO CLEAR
@@ -114,39 +118,58 @@ void Input::setup(){
 void Input::update(){
     
     //Update blackmagic
+    
 #if INPUT_VIDEO == 0
     player.update();
     isUpdatingRight = player.isFrameNew();
+    lastTimeAppFrame = ofGetSystemTimeMicros();
+    if(isUpdatingRight) lastTimeNewFrame = ofGetSystemTimeMicros();
 #elif INPUT_VIDEO == 1
     isUpdatingRight = blackMagic.update();
+    lastTimeAppFrame = ofGetSystemTimeMicros();
+    if(isUpdatingRight) lastTimeNewFrame = ofGetSystemTimeMicros();
 #elif INPUT_VIDEO == 2
-    isUpdatingRight = true;
     videoGrabber.update();
+    isUpdatingRight = videoGrabber.isFrameNew();
+    lastTimeAppFrame = ofGetSystemTimeMicros();
+    if(isUpdatingRight) lastTimeNewFrame = ofGetSystemTimeMicros();
+    
 #endif
     
     
-    //Threshold
-    fboTresh.begin();
-    ofClear(255,255,255, 0);
-    shaderTreshHsv.begin();
-    shaderTreshHsv.setUniform1f("threshold", threshold);
-    shaderTreshHsv.setUniform1f("threshold_smooth", smooth);
-    shaderTreshHsv.setUniform1f("transparency_smooth", transparency);
-    ofSetColor(255, 255, 255, 255);
-#if INPUT_VIDEO == 0
+    /* Draw only if there is a new frame available
+     
+     */
+    
+    if(isUpdatingRight){
+        //Threshold
+        fboTresh.begin();
+        ofClear(255,255,255, 0);
+        shaderTreshHsv.begin();
+        shaderTreshHsv.setUniform1f("threshold", threshold);
+        shaderTreshHsv.setUniform1f("threshold_smooth", smooth);
+        shaderTreshHsv.setUniform1f("transparency_smooth", transparency);
+        ofSetColor(255, 255, 255, 255);
+#if     INPUT_VIDEO == 0
         player.draw(0, 0, w, h);
-#elif INPUT_VIDEO == 1
+#elif   INPUT_VIDEO == 1
         blackMagic.drawColor();
-#elif INPUT_VIDEO == 2
+#elif   INPUT_VIDEO == 2
         videoGrabber.draw(0, 0, fboTresh.getWidth(), fboTresh.getHeight());
 #endif
+        shaderTreshHsv.end();
+        fboTresh.end();
+        
+    }
+     
+     
+    
+    
 
     
-    shaderTreshHsv.end();
-    fboTresh.end();
+    
     
     /*
-    
     // BLUR 1
     fboBlur1.begin();
     ofClear(255,255,255, 0);
@@ -240,8 +263,8 @@ void Input::videoGrabberInit(int &index){
     
 videoGrabber.close();
 videoGrabber.setDeviceID(index);
-videoGrabber.setDesiredFrameRate(30);
-videoGrabber.initGrabber(1280, 720);
+videoGrabber.setDesiredFrameRate(INPUT_FRAMERATE);
+videoGrabber.initGrabber(INPUT_WIDTH, INPUT_HEIGHT);
 
 }
 #endif

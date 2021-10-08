@@ -15,7 +15,12 @@
 #include "ofxOscParameterSync.h"
 
 //Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
-#define INPUT_VIDEO 0
+#define INPUT_VIDEO 2
+
+// Define INPUT Width and Height
+#define INPUT_WIDTH 1920
+#define INPUT_HEIGHT 1080
+#define INPUT_FRAMERATE 30
 
 /*
  
@@ -37,6 +42,8 @@ public:
     
     //INPUT VIDEO CHOICE
     bool isUpdatingRight;
+    uint64_t lastTimeNewFrame;
+    uint64_t lastTimeAppFrame;
 #if INPUT_VIDEO == 0
     ofVideoPlayer player;
     void setVideoIndex(int &newIndex);
