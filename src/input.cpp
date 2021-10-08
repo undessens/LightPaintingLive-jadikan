@@ -37,6 +37,7 @@ void Input::setup(){
     pg->add(playerPause.set("video_pause", false));
     
 #endif
+    pg->add(gain.set("gain lum", 0,-1.0, 1.0));
     pg->add(threshold.set("threshold", 0.1,0, 1.0));
     pg->add(smooth.set("threshold_curve", 0, 0, 1));
     //pg->add(transparency.set("transparency", 0, 0, 1));
@@ -54,11 +55,15 @@ void Input::setup(){
     // VIDEO GRABBER
     videoGrabberIndex.addListener(this, &Input::videoGrabberInit);
     std::vector<ofVideoDevice> listOfDevice = videoGrabber.listDevices();
+    int indexBlackMagicDevice = 1;
+    int index = 0;
     for(std::vector<ofVideoDevice>::iterator it = listOfDevice.begin(); it<listOfDevice.end(); ++it ){
         ofLog(OF_LOG_NOTICE, "Video Grabber Device :"+it->deviceName+" : "+it->hardwareName);
+        if(it->deviceName=="Blackmagic Design") indexBlackMagicDevice = index;
+        index++;
     }
     
-    pg->add(videoGrabberIndex.set("webcam_index", 1, 0, 10));
+    pg->add(videoGrabberIndex.set("webcam_index", indexBlackMagicDevice, 0, 10));
     name = "WEB CAM";
 #endif
     
@@ -146,6 +151,7 @@ void Input::update(){
         fboTresh.begin();
         ofClear(255,255,255, 0);
         shaderTreshHsv.begin();
+        shaderTreshHsv.setUniform1f("brightness_to_add", gain);
         shaderTreshHsv.setUniform1f("threshold", threshold);
         shaderTreshHsv.setUniform1f("threshold_smooth", smooth);
         shaderTreshHsv.setUniform1f("transparency_smooth", transparency);

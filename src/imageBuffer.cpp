@@ -157,6 +157,7 @@ void ImageBuffer::update(ofFbo* input){
     if(!record && activeInput){
         shader_add.begin();
         shader_add.setUniform1f("shaderLumThreshold", shaderLumThreshold);
+        shader_add.setUniform1i("add_substract", add_substract? 1 : 0);
         shader_add.setUniformTexture("background",bgFbo.getTexture(), 1);
         //FBO drawing in itself.
         input->draw(0, 0);

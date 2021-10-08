@@ -2,6 +2,7 @@
 
 uniform sampler2DRect tex0;
 
+uniform float brightness_to_add;
 uniform float threshold;
 uniform float threshold_smooth;
 uniform float transparency_smooth;
@@ -45,6 +46,8 @@ void main()
     color =  texture2DRect(tex0, texCoordVarying );
     vec3 hsvColor = rgb2hsv(vec3(color.r, color.g, color.b));
     //vec3 rgbColor = hsv2rgb(hsvColor);
+    hsvColor = vec3(hsvColor.r , hsvColor.g , min(1 , (max(0, hsvColor.b + brightness_to_add)))  );
+    
     float transparent_value;
     
     

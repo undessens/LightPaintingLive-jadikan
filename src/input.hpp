@@ -67,6 +67,7 @@ public:
     //ofFbo fboBlur2;
     ofParameterGroup* pg;
     ofParameter<int> skipStep;
+    ofParameter<float> gain; 
     ofParameter<float> threshold; 
     ofParameter<float> smooth;
     ofParameter<float> transparency;
