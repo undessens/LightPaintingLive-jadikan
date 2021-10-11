@@ -590,7 +590,7 @@ int ofApp::drawImageBuffer(ofRectangle lastElement){
     if(imageBuffer->isShown){
         
         vignetteBuffer.y = areaBuffer.y + totalH;
-        writeText("'space'=reset", vignetteBuffer.x + vignetteBuffer.width, vignetteBuffer.y, FONT_SMALL);
+        writeText("'space'=reset", vignetteBuffer.x + 50, vignetteBuffer.y, FONT_SMALL);
         ofSetColor(255,255,255);
         transparentBg.draw(vignetteBuffer);
         imageBuffer->draw(vignetteBuffer);
