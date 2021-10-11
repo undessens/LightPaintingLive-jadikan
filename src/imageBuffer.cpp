@@ -45,8 +45,9 @@ void ImageBuffer::setup(){
     
     pg->setName("Image_buffer");
     pg->add(isShown.set("show", true));
-    pg->add(activeInput.set("active_input", false));
+    pg->add(activeInput.set("input", true));
     pg->add(record.set("record", false));
+    pg->add(autoOffInput.set("auto_off_input", true));
     pg->add(recordStrobeSpeed.set("rec_strobe_speed", 0, 0, 1));
     pg->add(add_substract.set("add_substract", true));
     pg->add(reset.set("reset", false));
@@ -207,7 +208,16 @@ void ImageBuffer::resetBuffer(){
 //--------------------------------------------------------------
 void ImageBuffer::setRecordPause(bool &isRecord){
     
+    //Auto deactivation of active input : auto off input
+    // Permet un jeu beaucoup plus live de voir constamment l'input, mais
+    // perd le coté photographique
+    
+    if(isRecord || autoOffInput){
     activeInput = isRecord;
+    }
+    
+    
+    
     ofxOscMessage msg ;
     msg.setAddress("/main/Image_buffer/record");
     msg.addBoolArg(isRecord);

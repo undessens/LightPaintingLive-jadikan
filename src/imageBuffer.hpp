@@ -46,6 +46,7 @@ public:
     ofParameter<bool> record;
     ofParameter<bool> add_substract;
     ofParameter<bool> activeInput;
+    ofParameter<bool> autoOffInput;
     ofParameter<float> recordStrobeSpeed;
     bool recordStrobe;
     int recordStrobeIndex;
