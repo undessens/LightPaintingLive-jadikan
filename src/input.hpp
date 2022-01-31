@@ -8,14 +8,18 @@
 #ifndef input_hpp
 #define input_hpp
 
+//Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
+#define INPUT_VIDEO 2
+
 #include <stdio.h>
+#if INPUT_VIDEO == 1
 #include "ofxBlackMagic.h"
+#endif
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxOscParameterSync.h"
 
-//Define input video : 0 = files  | 1 = blackmagic | 2 = videograbber
-#define INPUT_VIDEO 2
+
 
 // Define INPUT Width and Height
 #define INPUT_WIDTH 1920

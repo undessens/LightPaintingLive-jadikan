@@ -171,7 +171,9 @@ void ofApp::setup(){
     
     
     //SYPHON SETTINGS
+#ifdef __APPLE__
     syphonOut.setName("Jadikan LightPainting");
+#endif
     
     //Zoom image setup
     zoomImage.allocate(vignetteZoom.width/2, vignetteZoom.height/2, OF_IMAGE_COLOR_ALPHA);
@@ -299,7 +301,10 @@ void ofApp::draw(){
    
     ofSetColor(255, 255, 255);
     ofFill();
+
+#ifdef __APPLE__
     syphonOut.publishTexture(&(mask->fbo.getTexture()));
+#endif
     
     if(isFullscreen){
 
@@ -529,10 +534,10 @@ int ofApp::drawApp(ofRectangle lastElement){
     
     string stringFps = "FPS : "+ofToString(int(  ofGetFrameRate()));
     ofRectangle fps = writeText(stringFps, lastElement.x, areaApp.y + totalH, FONT_SMALL);
-    
+#ifdef __APPLE__ 
     string syphonClient  = "syphon : "+ofToString(syphonOut.getName());
     ofRectangle syphon = writeText(syphonClient, fps.x + fps.width + marginW, areaApp.y  + totalH, FONT_SMALL);
-    
+#endif    
     totalH += fps.height;
     
     areaApp.height = totalH;
@@ -645,11 +650,11 @@ int ofApp::drawMask(ofRectangle lastElement){
 }
 //--------------------------------------------------------------
 int ofApp::drawFx(ofRectangle lastElement){
-    
+	return 0;
 }
 //--------------------------------------------------------------
 int ofApp::drawFinal(ofRectangle lastElement){
-    
+	return 0;
 }
 
 //--------------------------------------------------------------

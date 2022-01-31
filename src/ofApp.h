@@ -6,7 +6,9 @@
 #include "input.hpp"
 #include "imageBuffer.hpp"
 #include "mask.hpp"
+#ifdef __APPLE__
 #include "ofxSyphon.h"
+#endif
 //#include "ofxPostProcessing.h"
 
 #define FONT_BIG 3
@@ -64,11 +66,13 @@ class ofApp : public ofBaseApp{
     ofParameter<int> zoom_level;
     ofParameter<float> global_zoom;
     ofParameter<bool> auto_export;
-    
+ 
+#ifdef __APPLE__
     //Syphon output
     ofxSyphonServer syphonOut;
     ofTexture textureToPublish;
     ofImage imgTest;
+#endif
     
     //IMAGE parameter
     int input_w;
