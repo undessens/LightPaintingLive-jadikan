@@ -95,3 +95,9 @@ Desktop.ini
 *.xcscheme
 .xcconfig
 
+.vs/LightPaintingLive-jadikan/v15/Browse.VC.db
+.vs/LightPaintingLive-jadikan/v15/Solution.VC.db
+LightPaintingLive-jadikan.sln
+LightPaintingLive-jadikan.vcxproj
+*.filters
+*.user
