@@ -119,6 +119,9 @@ class ofApp : public ofBaseApp{
     ofPixels exportPixels;
     bool exportFlag;
     
+    //Fullscreen mode
+    bool isFullscreen;
+    
     
     
     

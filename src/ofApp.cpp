@@ -299,55 +299,67 @@ void ofApp::draw(){
    
     ofSetColor(255, 255, 255);
     ofFill();
-    
-    
     syphonOut.publishTexture(&(mask->fbo.getTexture()));
+    
+    if(isFullscreen){
 
-    ofSetColor(255,255,255);
-    gui.draw();
-    
-    //Draw app
-    drawApp(ofRectangle(areaGui.x + areaGui.width, marginH, ofGetWidth() - areaGui.width, 0));
+        mask->draw(ofRectangle(0,0,ofGetWidth(), ofGetHeight()));
+        if(imageBuffer->record){
+            ofNoFill();
+            ofSetColor(255);
+            ofSetLineWidth(5);
+            ofDrawRectangle(0,0,ofGetWidth(), ofGetHeight());
+        }
+        
+    }else{
+        ofSetColor(255,255,255);
+        gui.draw();
+        
+        //Draw app
+        drawApp(ofRectangle(areaGui.x + areaGui.width, marginH, ofGetWidth() - areaGui.width, 0));
+        
+        //INPUT
+        drawInput(areaApp);
+        
+        //Image Buffer
+        drawImageBuffer(areaInput);
+        
+        //MASK
+        drawMask(areaBuffer);
+        /*
+         
+         //POST FX
+         ofSetColor(0, 255, 255);
+         ofNoFill();
+         ofDrawRectangle(vignetteFx);
+         ofSetColor(255,255,255);
+         fboPost.draw(vignetteFx);
+         */
+        
+        //Draw Grid
+        drawGridArea();
+        
+        //ZOOM
+        if(zoomLevelEntry>0){
+            ofSetColor(255, 0, 0);
+            ofNoFill();
+            ofDrawRectangle(zoomRectangle);
+            ofSetColor(0, 0, 255);
+            ofNoFill();
+            //ofDrawRectangle(vignetteZoom);
+            ofSetColor(255,255,255);
+            //transparentBg.draw(vignetteZoom);
+            //zoomImage.draw(vignetteZoom);
+            transparentBg.draw(vignetteZoom);
+            zoomImage.draw(vignetteZoom);
+        }
+        
+        //Openframeworks bug as usual
+        ofSetColor(255);
 
-    //INPUT
-    drawInput(areaApp);
-    
-    //Image Buffer
-    drawImageBuffer(areaInput);
-
-    //MASK
-    drawMask(areaBuffer);
-    /*
-    
-    //POST FX
-    ofSetColor(0, 255, 255);
-    ofNoFill();
-    ofDrawRectangle(vignetteFx);
-    ofSetColor(255,255,255);
-    fboPost.draw(vignetteFx);
-     */
-    
-    //Draw Grid
-    drawGridArea();
-    
-    //ZOOM
-    if(zoomLevelEntry>0){
-    ofSetColor(255, 0, 0);
-    ofNoFill();
-    ofDrawRectangle(zoomRectangle);
-    ofSetColor(0, 0, 255);
-    ofNoFill();
-    //ofDrawRectangle(vignetteZoom);
-    ofSetColor(255,255,255);
-    //transparentBg.draw(vignetteZoom);
-    //zoomImage.draw(vignetteZoom);
-    transparentBg.draw(vignetteZoom);
-    zoomImage.draw(vignetteZoom);
     }
-    
-    //Openframeworks bug as usual
-    ofSetColor(255);
 
+    
 }
 
 //--------------------------------------------------------------
@@ -666,6 +678,13 @@ void ofApp::keyPressed(int key){
         case 'e':
             exportImage();
         break;
+        case 'f':
+            isFullscreen = !isFullscreen;
+            ofSetFullscreen(isFullscreen);
+        break;
+        case 'r':
+            imageBuffer->record = !imageBuffer->record;
+            break;
             
 
     }
